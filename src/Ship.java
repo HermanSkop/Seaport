@@ -1,10 +1,12 @@
+import org.jetbrains.annotations.NotNull;
+
 public class Ship {
     int maxToxicAndExplosiveConts;
     int maxHeavyConts;
     int maxElectroConts;
     int maxAllConts;
     double maxWeight;
-    static int lastId;
+    static int lastId = 0;
 
     int shipId;
     String name;
@@ -12,13 +14,10 @@ public class Ship {
     String transportOrigin;
     String destination;
     Ship(){
-        if(lastId>-1) {
-            shipId = Ship.lastId++;
-        }
-        else {
-            lastId = 1;
-            shipId = lastId;
-        }
-        System.out.println("Ship by ID: "+lastId+" is created");
+        shipId = lastId++;
+        System.out.println("Ship by ID: " + lastId + " is created");
+    }
+    public void upload(@NotNull Container cont){
+        System.out.println("Container " + cont.hashCode() + " is loaded");
     }
 }

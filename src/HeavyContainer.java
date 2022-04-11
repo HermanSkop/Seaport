@@ -14,6 +14,6 @@ public class HeavyContainer extends Container implements Heavy{
     }
     @Override
     public double wholeLength() {
-        return lenght+addLength;
+        return length +addLength;
     }
 }
