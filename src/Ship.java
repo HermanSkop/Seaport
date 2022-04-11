@@ -10,7 +10,7 @@ public class Ship {
 
     int shipId;
     String name;
-  //  Port homePort;
+    Port homePort;
     String transportOrigin;
     String destination;
     Ship(){
