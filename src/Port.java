@@ -1,8 +1,15 @@
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 public class Port {
     List<Ship> ShipsInPort = new ArrayList<>();
-    List<Ship> WarehousesInPort = new ArrayList<>();
+    List<Warehouse> WarehousesInPort = new ArrayList<>();
+
+    public void addWarehouse(@NotNull Warehouse house){
+        WarehousesInPort.add(house);
+    }
+
     public void action(){
         Scanner read = new Scanner(System.in);
         String input = read.nextLine();
@@ -46,10 +53,12 @@ public class Port {
             if(e.isFinishedWell()) {
                 String place = choosePlace();
                 if(Objects.equals(place, "Warehouse")){
-                    //continue
+                    Warehouse warehouse = chooseWarehouse();
+                    System.out.println(warehouse.id + " is id of the chosen warehouse");
                 }
                 else {
-
+                    System.out.println("Not ready yet. Back to an action");
+                    action();
                 }
             }
             else {
@@ -79,7 +88,7 @@ public class Port {
         }
         catch (FinishInput e){
             if(e.isFinishedWell()) {
-                return e.getInput();
+                return e.getMessage();
             }
             else {
                 System.out.println("Erasing changes..");
@@ -88,25 +97,51 @@ public class Port {
         };
         return "";
     }
-    public Warehouse choseWarehouse(){
-        System.out.println("Choose warehouse you want to use to store a container(houses): ");
+    public Warehouse chooseWarehouse(){
+        System.out.println("Choose id of warehouse you want to use to store a container(houses): ");
         Scanner readWarehouse = new Scanner(System.in);
         String inputWarehouse = readWarehouse.nextLine();
         try {
-            //finish function first
-            if (Objects.equals(inputWarehouse, "houses"));
-            else if(Objects.equals(inputWarehouse, "Ship"))throw new FinishInput(true, inputWarehouse);
-            else if(Objects.equals(inputWarehouse, "stop"))throw new FinishInput(false, inputWarehouse);
-            else System.out.println("Incorrect input: " + inputWarehouse);
-            choosePlace();
+            try {
+                if (Objects.equals(inputWarehouse, "houses")) showHouses();
+                else if(Objects.equals(inputWarehouse, "stop"))throw new FinishInput(false, inputWarehouse);
+                else {
+                    int tempId = Integer.parseInt(inputWarehouse);
+                    Warehouse tempHouse = getHouseById(tempId);
+                    if(tempHouse!=null)throw new FinishInput(true, tempHouse);
+                    else System.out.println("Can't find warehouse by " + tempId + " id. Try 'houses' to observe existing ones.");
+                    System.out.println("Wrong input, try again.");
+                }
+                chooseWarehouse();
+            }
+            catch (NumberFormatException e){
+                System.out.println("Input should consist int value only!");
+                chooseWarehouse();
+            }
         }
         catch (FinishInput e){
             if(e.isFinishedWell()) {
+                System.out.println("Well, we are good!");
+                return e.getWareHouse();
             }
             else {
                 System.out.println("Erasing changes..");
                 action();
             }
         };
+        return null;
+    }
+    public void showHouses(){
+        for(Warehouse i : WarehousesInPort){
+            System.out.println(" id: " + i.id);
+        }
+    }
+    public Warehouse getHouseById(int id){
+        try {
+            return WarehousesInPort.get(id);
+        }
+        catch (Exception e){
+            return null;
+        }
     }
 }

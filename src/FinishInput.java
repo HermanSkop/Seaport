@@ -1,15 +1,24 @@
 public class FinishInput extends Exception{
-    private String input;
+    private String message;
     private boolean finishedWell;
-    FinishInput(boolean finishedwell, String Input){
+    private Warehouse wareHouse;
+
+    FinishInput(boolean finishedwell, String Message){
         finishedWell = finishedwell;
-        input = Input;
+        message = Message;
+    }
+    FinishInput(boolean finishedwell, Warehouse house){
+        wareHouse = house;
+        finishedWell = finishedwell;
     }
 
-    public String getInput() {
-        return input;
+    public String getMessage() {
+        return message;
     }
     public boolean isFinishedWell(){
         return finishedWell;
+    }
+    public Warehouse getWareHouse() {
+        return wareHouse;
     }
 }
