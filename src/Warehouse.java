@@ -26,6 +26,6 @@ public class Warehouse {
         return capacity;
     }
     public void addToWarehouse(){
-        
+
     }
 }
