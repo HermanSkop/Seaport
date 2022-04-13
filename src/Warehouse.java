@@ -2,21 +2,21 @@ public class Warehouse {
     Port port;
     private int capacity;
     int id;
-    static int lastId = 0;
+    static int lastId = -1;
     Warehouse(Port InPort){
         port = InPort;
-        port.addWarehouse(this);
         capacity = 0;
-        id = lastId++;
-        System.out.println("Warehouse by ID: " + lastId + " is created");
+        id = lastId+1;
+        ++lastId;
+        System.out.println("Warehouse by ID: " + id + " is created");
 
     }
     Warehouse(Port InPort, int Capacity){
         port = InPort;
-        port.addWarehouse(this);
         capacity = Capacity;
-        id = lastId++;
-        System.out.println("Warehouse by ID: " + lastId + " is created");
+        id = lastId+1;
+        lastId++;
+        System.out.println("Warehouse by ID: " + id + " is created");
     }
 
     public void setCapacity(int capacity) {
@@ -24,5 +24,8 @@ public class Warehouse {
     }
     public int getCapacity() {
         return capacity;
+    }
+    public void addToWarehouse(){
+        
     }
 }

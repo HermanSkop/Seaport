@@ -6,6 +6,9 @@ public class Port {
     List<Ship> ShipsInPort = new ArrayList<>();
     List<Warehouse> WarehousesInPort = new ArrayList<>();
 
+    Port(){
+        WarehousesInPort.add(new Warehouse(this, 3));
+    }
     public void addWarehouse(@NotNull Warehouse house){
         WarehousesInPort.add(house);
     }
@@ -84,7 +87,7 @@ public class Port {
             else if(Objects.equals(inputPlace, "Ship"))throw new FinishInput(true, inputPlace);
             else if(Objects.equals(inputPlace, "stop"))throw new FinishInput(false, inputPlace);
             else System.out.println("Incorrect input: " + inputPlace);
-            choosePlace();
+            return choosePlace();
         }
         catch (FinishInput e){
             if(e.isFinishedWell()) {
@@ -110,7 +113,6 @@ public class Port {
                     Warehouse tempHouse = getHouseById(tempId);
                     if(tempHouse!=null)throw new FinishInput(true, tempHouse);
                     else System.out.println("Can't find warehouse by " + tempId + " id. Try 'houses' to observe existing ones.");
-                    System.out.println("Wrong input, try again.");
                 }
                 chooseWarehouse();
             }
@@ -121,7 +123,6 @@ public class Port {
         }
         catch (FinishInput e){
             if(e.isFinishedWell()) {
-                System.out.println("Well, we are good!");
                 return e.getWareHouse();
             }
             else {
@@ -132,7 +133,7 @@ public class Port {
         return null;
     }
     public void showHouses(){
-        for(Warehouse i : WarehousesInPort){
+       for(Warehouse i : WarehousesInPort){
             System.out.println(" id: " + i.id);
         }
     }
