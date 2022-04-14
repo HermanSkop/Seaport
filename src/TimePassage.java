@@ -1,8 +1,9 @@
 import java.time.LocalDate;
 
 public class TimePassage extends Thread{
-    LocalDate currentDate = null;
-    
+    static LocalDate currentDate = null;
+    // dayStep is in millis
+    static int dayStep = 1000;
     TimePassage(){
         currentDate = LocalDate.now();
         start();
@@ -10,9 +11,9 @@ public class TimePassage extends Thread{
     public void run() {
         try {
             while (true){
-                System.out.println(currentDate.toString());
-                sleep(5000);
-            currentDate = currentDate.plusDays(1);
+               // System.out.println(currentDate.toString());
+                sleep(dayStep);
+                currentDate = currentDate.plusDays(1);
             }
         }
         catch (Exception e) {

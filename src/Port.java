@@ -1,5 +1,4 @@
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 
 public class Port {
@@ -7,20 +6,22 @@ public class Port {
     List<Warehouse> WarehousesInPort = new ArrayList<>();
 
     Port(){
-        WarehousesInPort.add(new Warehouse(this, 3));
+        addWarehouse(new Warehouse(this, 3));
     }
-    public void addWarehouse(@NotNull Warehouse house){
-        WarehousesInPort.add(house);
-    }
+
 
     public void action(){
         Scanner read = new Scanner(System.in);
         String input = read.nextLine();
         try {
-            if (Objects.equals(input, "create ship"))createShip();
-            else if(Objects.equals(input, "create cont")) createCont();
+            if (Objects.equals(input, "cs"))createShip();
+            else if(Objects.equals(input, "cc")) createCont();
+            else if(Objects.equals(input, "cw")) createWarehouse();
+            else if(Objects.equals(input, "sw")) showWarehouses();
+            else if(Objects.equals(input, "wi")) whatInsideWarehouse(chooseWarehouse());
             else if(Objects.equals(input, "end"))throw new Exception();
-            else System.out.println("Incorrect input: " + input);
+            else if(Objects.equals(input, "help")) hint();
+            else System.out.println("Incorrect input: " + input + " try 'help'");
             action();
         }
         catch (Exception e){
@@ -42,6 +43,7 @@ public class Port {
             if (Objects.equals(inputType, "types")){getTypesOfConts(); createCont();}
             else if(Objects.equals(inputType, "Standard")) throw new FinishInput(true, inputType);
             else if(Objects.equals(inputType, "Heavy")) throw new FinishInput(true, inputType);
+            else if(Objects.equals(inputType, "AntiExplosive")) throw new FinishInput(true, inputType);
             else if(Objects.equals(inputType, "Liquid")) throw new FinishInput(true, inputType);
             else if(Objects.equals(inputType, "Refrigerator")) throw new FinishInput(true, inputType);
             else if(Objects.equals(inputType, "ToxicLiquid")) throw new FinishInput(true, inputType);
@@ -55,9 +57,11 @@ public class Port {
         catch (FinishInput e){
             if(e.isFinishedWell()) {
                 String place = choosePlace();
+                Container contToAdd = stringToCont(e.getMessage());
                 if(Objects.equals(place, "Warehouse")){
                     Warehouse warehouse = chooseWarehouse();
                     System.out.println(warehouse.id + " is id of the chosen warehouse");
+                    warehouse.addToWarehouse(contToAdd);
                 }
                 else {
                     System.out.println("Not ready yet. Back to an action");
@@ -69,6 +73,16 @@ public class Port {
                 action();
             }
         };
+    }
+    public void createWarehouse(){
+
+    }
+    public void whatInsideWarehouse(Warehouse warehouse){
+        warehouse.inside();
+    }
+
+    public void addWarehouse(@NotNull Warehouse house){
+        WarehousesInPort.add(house);
     }
     public void getTypesOfConts(){
         System.out.println(" Standard;");
@@ -106,7 +120,7 @@ public class Port {
         String inputWarehouse = readWarehouse.nextLine();
         try {
             try {
-                if (Objects.equals(inputWarehouse, "houses")) showHouses();
+                if (Objects.equals(inputWarehouse, "houses")) showWarehouses();
                 else if(Objects.equals(inputWarehouse, "stop"))throw new FinishInput(false, inputWarehouse);
                 else {
                     int tempId = Integer.parseInt(inputWarehouse);
@@ -114,7 +128,7 @@ public class Port {
                     if(tempHouse!=null)throw new FinishInput(true, tempHouse);
                     else System.out.println("Can't find warehouse by " + tempId + " id. Try 'houses' to observe existing ones.");
                 }
-                chooseWarehouse();
+                return chooseWarehouse();
             }
             catch (NumberFormatException e){
                 System.out.println("Input should consist int value only!");
@@ -132,7 +146,7 @@ public class Port {
         };
         return null;
     }
-    public void showHouses(){
+    public void showWarehouses(){
        for(Warehouse i : WarehousesInPort){
             System.out.println(" id: " + i.id);
         }
@@ -144,5 +158,27 @@ public class Port {
         catch (Exception e){
             return null;
         }
+    }
+    public Container stringToCont(String input){
+        if(Objects.equals(input, "Standard")){return new StandardContainer();}
+        else if(Objects.equals(input, "Heavy")){return new HeavyContainer();}
+        else if(Objects.equals(input, "Liquid")){return new LiquidContainer();}
+        else if(Objects.equals(input, "Refrigerator")){return new RefrigeratedContainer();}
+        else if(Objects.equals(input, "ToxicLiquid")){return new ToxicLiquidContainer();}
+        else if(Objects.equals(input, "ToxicPowdery")){return new ToxicPowderyContainer();}
+        else if(Objects.equals(input, "AntiExplosive")){return new AntiExplosiveContainer();}
+        else{
+            System.out.println("No matched containers, null is returned!!!");
+            return null;
+        }
+    }
+    public void hint(){
+        System.out.println("cs - create ship");
+        System.out.println("cc - create container");
+        System.out.println("cw - create warehouse");
+        System.out.println("sw - show existing warehouses in port");
+        System.out.println("wi - show what is stored in warehouse");
+        System.out.println("end - finish");
+
     }
 }
