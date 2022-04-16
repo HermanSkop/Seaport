@@ -20,4 +20,8 @@ public class TimePassage extends Thread{
             System.out.println("Exception is caught");
         }
     }
+
+    public static LocalDate getCurrentDate() {
+        return currentDate;
+    }
 }

@@ -1,7 +1,11 @@
 public class HeavyContainer extends Container implements Heavy{
     HeavyContainer(){}
-    HeavyContainer(String senderInfo, String tare, String securityInfo, double netWeight, double grossWeight, String certificates){
-        this.senderInfo = senderInfo;
+    HeavyContainer(Sender senderInfo, String tare, String securityInfo, double netWeight, double grossWeight, String certificates){
+        this.sender = senderInfo;
+    }
+
+    public HeavyContainer(Sender s) {
+        super(s);
     }
 
     @Override

@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.*;
 
 public class Warehouse {
@@ -30,9 +31,12 @@ public class Warehouse {
         return capacity;
     }
     public void addToWarehouse(Container container){
-        outOfTime timeOut = new outOfTime(container, this);
-        storedConts.add(container);
-        System.out.println(container.hashCode() + " is added to " + id + " Warehouse");
+        if(container.sender.isResponsible()) {
+            outOfTime timeOut = new outOfTime(container, this);
+            storedConts.add(container);
+            System.out.println(container.hashCode() + " is added to " + id + " Warehouse");
+        }
+        else System.out.println("Container cannot be added, because sender has no permission!");
     }
     public boolean isInWarehouse(Container container){
         return storedConts.contains(container);
