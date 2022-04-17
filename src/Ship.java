@@ -1,5 +1,8 @@
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Ship {
@@ -9,6 +12,7 @@ public class Ship {
     int maxAllConts;
     double maxWeight;
     static int lastId = -1;
+    List<Container> storedConts = new ArrayList<>();
 
     int shipId;
     String name;
@@ -21,7 +25,7 @@ public class Ship {
         System.out.println("Ship by ID: " + lastId + " is created");
     }
     public void upload(@NotNull Container cont){
-        System.out.println("Container " + cont.hashCode() + " is loaded");
+        System.out.println("Container " + cont.hashCode() + " is uploaded");
     }
     public void fillInfo(){
         inputMaxWeight();
@@ -148,4 +152,79 @@ public class Ship {
                 + "\n homePort: " + homePort+ "\n transportOrigin: " + transportOrigin+ "\n destination: " + destination;
     };
 
+
+    public void addToShip(Container container){
+        ContSuitability e = suitRequirements(container);
+        if(e.isSuitable()) {
+            storedConts.add(container);
+            System.out.println("Container " + container.hashCode() + " is added to " + shipId + " ship");
+        }
+        else System.out.println("Container cannot be added, because " + e.getMessage());
+
+    }
+    public ContSuitability suitRequirements(Container container){
+        try{
+            if((getCurrWeight()+container.grossWeight)>maxWeight) throw new ContSuitability(false, "Ship cannot fit anymore containers due to weight overload!");
+            if((getCurrNumOfConts()+1)>maxAllConts)  throw new ContSuitability(false, "Ship cannot fit anymore containers due to lack of space for All containers!");
+            if((getCurrHeavyConts()+1)>maxHeavyConts)  throw new ContSuitability(false, "Ship cannot fit anymore containers due to lack of space for Heavy containers!");
+            if((getCurrElectroConts()+1)>maxElectroConts)  throw new ContSuitability(false, "Ship cannot fit anymore containers due lack of space for Electro containers!");
+            if((getCurrDangConts()+1)>maxToxicAndExplosiveConts)  throw new ContSuitability(false, "Ship cannot fit anymore containers due lack of space for Dangerous containers!");
+
+
+
+            else throw new ContSuitability(true, "Everything is fine");
+        }
+        catch (ContSuitability e){
+            return e;
+        }
+    }
+
+    public int getCurrDangConts(){
+        int num = 0;
+        for(Container i:storedConts){
+            if(Objects.equals(i.getClass().getName(), ToxicLiquidContainer.class.getName())||Objects.equals(i.getClass().getName(), ToxicPowderyContainer.class.getName())||Objects.equals(i.getClass().getName(), AntiExplosiveContainer.class.getName())){
+                num++;
+            }
+
+        }
+        return num;
+    }
+    public int getCurrElectroConts(){
+        int num = 0;
+        for(Container i:storedConts){
+            if(Objects.equals(i.getClass().getName(), ElectroContainer.class.getName())){
+                num++;
+            }
+
+        }
+        return num;
+    }
+    public int getCurrHeavyConts(){
+        int num = 0;
+        for(Container i:storedConts){
+            if(i.getClass()==HeavyContainer.class){
+                num++;
+            }
+
+        }
+        return num;
+    }
+    public int getCurrNumOfConts(){
+        int num = 0;
+        for(Container i:storedConts){
+            num++;
+        }
+        return num;
+    }
+    public double getCurrWeight(){
+        double weight = 0;
+        for(Container i:storedConts){
+            weight+=i.grossWeight;
+        }
+        return weight;
+    }
+
+    public void inside(){
+        System.out.println(storedConts.toString());
+    }
 }

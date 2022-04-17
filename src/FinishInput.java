@@ -3,6 +3,7 @@ public class FinishInput extends Exception{
     private boolean finishedWell;
     private Warehouse wareHouse;
     private Sender sender;
+    private Ship ship;
 
     FinishInput(boolean finishedwell, String Message){
         finishedWell = finishedwell;
@@ -14,6 +15,10 @@ public class FinishInput extends Exception{
     }
     FinishInput(boolean finishedwell, Sender sender){
         this.sender = sender;
+        finishedWell = finishedwell;
+    }
+    FinishInput(boolean finishedwell, Ship ship){
+        this.ship = ship;
         finishedWell = finishedwell;
     }
 
@@ -28,5 +33,8 @@ public class FinishInput extends Exception{
     }
     public Sender getSender() {
         return sender;
+    }
+    public Ship getShip() {
+        return ship;
     }
 }
