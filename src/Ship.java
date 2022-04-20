@@ -24,6 +24,23 @@ public class Ship {
         ++lastId;
         System.out.println("Ship by ID: " + lastId + " is created");
     }
+    Ship(Boolean commonOrExtended){
+        super();
+        if(commonOrExtended){
+            maxToxicAndExplosiveConts = 5;
+            maxElectroConts = 5;
+            maxHeavyConts = 5;
+            maxAllConts = 20;
+            maxWeight = 400;
+        }
+        else {
+            maxToxicAndExplosiveConts = 10;
+            maxElectroConts = 10;
+            maxHeavyConts = 10;
+            maxAllConts = 40;
+            maxWeight = 800;
+        }
+    }
     public void upload(@NotNull Container cont){
         System.out.println("Container " + cont.hashCode() + " is uploaded");
     }
@@ -152,7 +169,6 @@ public class Ship {
                 + "\n homePort: " + homePort+ "\n transportOrigin: " + transportOrigin+ "\n destination: " + destination;
     };
 
-
     public void addToShip(Container container){
         ContSuitability e = suitRequirements(container);
         if(e.isSuitable()) {
@@ -161,6 +177,14 @@ public class Ship {
         }
         else System.out.println("Container cannot be added, because " + e.getMessage());
 
+    }
+    public void unloadFromShip(Container containerToUnload){
+        try {
+            storedConts.remove(containerToUnload);
+        }
+        catch (Exception e){
+            System.out.println("Cannot find such container");
+        }
     }
     public ContSuitability suitRequirements(Container container){
         try{
@@ -222,6 +246,39 @@ public class Ship {
             weight+=i.grossWeight;
         }
         return weight;
+    }
+
+    public Container getContainer(){
+        System.out.println("Choose id of container you need(conts)");
+        Scanner readCont = new Scanner(System.in);
+        String inputCont = readCont.nextLine();
+        try {
+            try {
+                if (Objects.equals(inputCont, "conts")) inside();
+                else if(Objects.equals(inputCont, "stop"))throw new FinishInput(false, inputCont);
+                else {
+                    int tempId = Integer.parseInt(inputCont);
+                    Container container = storedConts.get(tempId);
+                    if(container!=null)throw new FinishInput(true, container);
+                    else System.out.println("Can't find container by " + tempId + " id. Try 'conts' to observe existing ones.");
+                }
+                return getContainer();
+            }
+            catch (NumberFormatException e){
+                System.out.println("Input should consist int value only!");
+                return getContainer();
+            }
+        }
+        catch (FinishInput e){
+            if(e.isFinishedWell()) {
+                return e.getContainer();
+            }
+            else {
+                System.out.println("Erasing changes..");
+                return null;
+            }
+        }
+
     }
 
     public void inside(){

@@ -4,11 +4,21 @@ import java.util.*;
 public class Port {
     List<Ship> ShipsInPort = new ArrayList<>();
     List<Warehouse> WarehousesInPort = new ArrayList<>();
+    railwayTransport railTrans = null;
 
     Port(){
         addWarehouse(new Warehouse(this, 3));
+        addShip(new Ship(true));
+        Sender.ListOfSenders.add(new Sender("ABC"));
+        for(int i=0; i<ShipsInPort.get(0).maxAllConts-4; i++){
+            ShipsInPort.get(0).addToShip(new StandardContainer(Sender.ListOfSenders.get(0)));
+        }
+        ShipsInPort.get(0).addToShip(new HeavyContainer(Sender.ListOfSenders.get(0)));
+        ShipsInPort.get(0).addToShip(new ToxicPowderyContainer(Sender.ListOfSenders.get(0)));
+        ShipsInPort.get(0).addToShip(new AntiExplosiveContainer(Sender.ListOfSenders.get(0)));
+        ShipsInPort.get(0).addToShip(new ToxicLiquidContainer(Sender.ListOfSenders.get(0)));
+        railTrans = new railwayTransport(this);
     }
-
 
     public void action(){
         Scanner read = new Scanner(System.in);
@@ -20,9 +30,12 @@ public class Port {
             else if(Objects.equals(input, "cw")) createWarehouse();
             else if(Objects.equals(input, "sw")) showWarehouses();
             else if(Objects.equals(input, "ss")) showShips();
+            else if(Objects.equals(input, "sc")) showConts();
+            else if(Objects.equals(input, "sr")) showRailTrans();
             else if(Objects.equals(input, "wiw")) whatInsideWarehouse(chooseWarehouse());
             else if(Objects.equals(input, "wis")) whatInsideShip(chooseShip());
             else if(Objects.equals(input, "wisr")) whatInsideSenders();
+            else if(Objects.equals(input, "utrt")) unloadToRailTransport();
             else if(Objects.equals(input, "end"))throw new Exception();
             else if(Objects.equals(input, "help")) hint();
             else System.out.println("Incorrect input: " + input + ", try 'help'");
@@ -109,13 +122,27 @@ public class Port {
         }
     }
 
+
     public void addWarehouse(@NotNull Warehouse house){
         WarehousesInPort.add(house);
     }
+    public void addShip(@NotNull Ship ship){ShipsInPort.add(ship);}
 
-
+    public void unloadToRailTransport(){
+        Ship tempShip = chooseShip();
+        Container tempCont = chooseContainer(tempShip);
+        tempShip.unloadFromShip(tempCont);
+        try {
+            railTrans.addContainerToTransport(tempCont);
+        }
+        catch (NullPointerException e){
+            System.out.println("Railway transport is not in port yet!");
+            action();
+        }
+        action();
+    }
     public String choosePlace(){
-        System.out.println("Where would you like to store this container?(Warehouse/Ship)");
+        System.out.println("Choose place: (Warehouse/Ship)");
         Scanner readPlace = new Scanner(System.in);
         String inputPlace = readPlace.nextLine();
         try {
@@ -232,7 +259,53 @@ public class Port {
         };
         return null;
     }
+    public Container chooseContainer(){
+        try {
+            String tempPlace = choosePlace();
+            if (Objects.equals(tempPlace, "Ship") || Objects.equals(tempPlace, "s")) {
+                return chooseShip().getContainer();
+            } else if (Objects.equals(tempPlace, "Warehouse") || Objects.equals(tempPlace, "w")) {
+                return chooseWarehouse().getContainer();
+            }
+        }
+        catch (Exception e){
+            System.out.println("Process interrupted, moving to home page");
+            action();
+        }
+        return null;
+    }
+    public Container chooseContainer(Ship ship){
+        try {
+            return ship.getContainer();
+        }
+        catch (Exception e){
+            System.out.println("Process interrupted, moving to home page");
+            action();
+        }
+        return null;
+    }
 
+    public void showConts(Ship ship){
+        whatInsideShip(ship);
+    }
+    public void showConts(Warehouse warehouse){
+        whatInsideWarehouse(warehouse);
+    }
+    public void showConts(){
+        System.out.println("Where would you like to observe existing containers?");
+        String tempPlace = choosePlace();
+        if(Objects.equals(tempPlace, "Ship")||Objects.equals(tempPlace, "s")){
+            whatInsideShip(chooseShip());
+        }
+        else if(Objects.equals(tempPlace, "Warehouse")||Objects.equals(tempPlace, "w")){
+            whatInsideWarehouse(chooseWarehouse());
+        }
+        else if (Objects.equals(tempPlace, "stop")){
+            System.out.println("back to home page");
+            action();
+        }
+        else showConts();
+    }
     public void showWarehouses(){
        for(Warehouse i : WarehousesInPort){
             System.out.println(" id: " + i.id);
@@ -241,6 +314,14 @@ public class Port {
     public void showShips(){
         for(Ship i : ShipsInPort){
             System.out.println(" id: " + i.shipId);
+        }
+    }
+    public void showRailTrans(){
+        try{
+            System.out.println(railTrans.toString());
+        }
+        catch (NullPointerException e){
+            System.out.println("Railway transport is not in port yet!");
         }
     }
 
@@ -256,19 +337,6 @@ public class Port {
             System.out.println("No matched containers, null is returned!!!");
             return null;
         }
-    }
-    public void hint(){
-        System.out.println("cs - create ship");
-        System.out.println("cc - create container");
-        System.out.println("cw - create warehouse");
-        System.out.println("csr - create sender");
-        System.out.println("sw - show existing warehouses in port");
-        System.out.println("ss - show existing ships in port");
-        System.out.println("wiw - show what is stored in warehouse");
-        System.out.println("wis - show what is stored in ship");
-        System.out.println("wisr - show all possible senders");
-        System.out.println("end - finish");
-        System.out.println("There is also 'stop' command that works almost everywhere to remove changes and back to starting page!");
     }
     public boolean yesORNo(){
         Scanner read = new Scanner(System.in);
@@ -346,6 +414,23 @@ public class Port {
     }
     public void whatInsideSenders(){
         Sender.showListOfSenders();
+    }
+
+    public void hint(){
+        System.out.println("cs - create ship");
+        System.out.println("cc - create container");
+        System.out.println("cw - create warehouse");
+        System.out.println("csr - create sender");
+        System.out.println("sw - show existing warehouses in port");
+        System.out.println("ss - show existing ships in port");
+        System.out.println("sc - show existing containers in port");
+        System.out.println("sr - show existing containers in railway transport");
+        System.out.println("wiw - show what is stored in warehouse");
+        System.out.println("wis - show what is stored in ship");
+        System.out.println("utrt - unload to railway transport");
+        System.out.println("wisr - show all possible senders");
+        System.out.println("end - finish");
+        System.out.println("There is also 'stop' command that works almost everywhere to remove changes and back to starting page!");
     }
 
 

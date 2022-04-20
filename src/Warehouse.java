@@ -48,4 +48,38 @@ public class Warehouse {
     public void inside(){
         System.out.println(storedConts.toString());
     }
+
+    public Container getContainer(){
+        System.out.println("Choose id of container you need(conts)");
+        Scanner readCont = new Scanner(System.in);
+        String inputCont = readCont.nextLine();
+        try {
+            try {
+                if (Objects.equals(inputCont, "conts")) inside();
+                else if(Objects.equals(inputCont, "stop"))throw new FinishInput(false, inputCont);
+                else {
+                    int tempId = Integer.parseInt(inputCont);
+                    Container container = storedConts.get(tempId);
+                    if(container!=null)throw new FinishInput(true, container);
+                    else System.out.println("Can't find cont by " + tempId + " id. Try 'conts' to observe existing ones.");
+                }
+                return getContainer();
+            }
+            catch (NumberFormatException e){
+                System.out.println("Input should consist int value only!");
+                return getContainer();
+            }
+        }
+        catch (FinishInput e){
+            if(e.isFinishedWell()) {
+                return e.getContainer();
+            }
+            else {
+                System.out.println("Erasing changes..");
+                return null;
+            }
+        }
+
+    }
+
 }
