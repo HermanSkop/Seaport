@@ -7,7 +7,7 @@ public class Port {
     railwayTransport railTrans = null;
 
     Port(){
-        addWarehouse(new Warehouse(this, 3));
+        addWarehouse(new Warehouse(this, 1));
         addShip(new Ship(true));
         Sender.ListOfSenders.add(new Sender("ABC"));
         for(int i=0; i<ShipsInPort.get(0).maxAllConts-4; i++){
@@ -32,10 +32,12 @@ public class Port {
             else if(Objects.equals(input, "ss")) showShips();
             else if(Objects.equals(input, "sc")) showConts();
             else if(Objects.equals(input, "sr")) showRailTrans();
+            else if(Objects.equals(input, "lts")) loadToShip();
             else if(Objects.equals(input, "wiw")) whatInsideWarehouse(chooseWarehouse());
             else if(Objects.equals(input, "wis")) whatInsideShip(chooseShip());
             else if(Objects.equals(input, "wisr")) whatInsideSenders();
             else if(Objects.equals(input, "utrt")) unloadToRailTransport();
+            else if(Objects.equals(input, "utw")) unloadToWarehouse();
             else if(Objects.equals(input, "end"))throw new Exception();
             else if(Objects.equals(input, "help")) hint();
             else System.out.println("Incorrect input: " + input + ", try 'help'");
@@ -81,7 +83,8 @@ public class Port {
                 if(Objects.equals(place, "Warehouse")||Objects.equals(place, "w")){
                     Warehouse warehouse = chooseWarehouse();
                     System.out.println(warehouse.id + " is id of the chosen warehouse");
-                    warehouse.addToWarehouse(contToAdd);
+                    boolean isNotEmpty = warehouse.addToWarehouse(contToAdd);
+                    if(!isNotEmpty) System.out.println("Container is not added because warehouse is full or sender is not responsible");
                 }
                 else if(Objects.equals(place, "Ship")||Objects.equals(place, "s")) {
                     Ship ship = chooseShip();
@@ -131,14 +134,32 @@ public class Port {
     public void unloadToRailTransport(){
         Ship tempShip = chooseShip();
         Container tempCont = chooseContainer(tempShip);
-        tempShip.unloadFromShip(tempCont);
         try {
             railTrans.addContainerToTransport(tempCont);
+            tempShip.unloadFromShip(tempCont);
         }
         catch (NullPointerException e){
             System.out.println("Railway transport is not in port yet!");
             action();
         }
+        action();
+    }
+    public void unloadToWarehouse(){
+        Ship tempShip = chooseShip();
+        Container tempCont = chooseContainer(tempShip);
+        try {
+            boolean isNotFull = chooseWarehouse().addToWarehouse(tempCont);
+            if(isNotFull)
+                tempShip.unloadFromShip(tempCont);
+            else throw new Exception();
+        }
+        catch (Exception e) {
+            System.out.println("Container cannot be added, because sender has no permission or warehouse is full!");
+        }
+        action();
+    }
+    public void loadToShip(){
+        chooseShip().addToShip(chooseContainer(chooseWarehouse()));
         action();
     }
     public String choosePlace(){
@@ -164,7 +185,7 @@ public class Port {
         return "";
     }
     public Warehouse chooseWarehouse(){
-        System.out.println("Choose id of warehouse (houses): ");
+        System.out.println("Choose position of warehouse (houses): ");
         Scanner readWarehouse = new Scanner(System.in);
         String inputWarehouse = readWarehouse.nextLine();
         try {
@@ -175,7 +196,7 @@ public class Port {
                     int tempId = Integer.parseInt(inputWarehouse);
                     Warehouse tempHouse = getHouseById(tempId);
                     if(tempHouse!=null)throw new FinishInput(true, tempHouse);
-                    else System.out.println("Can't find warehouse by " + tempId + " id. Try 'houses' to observe existing ones.");
+                    else System.out.println("Can't find warehouse by " + tempId + " position. Try 'houses' to observe existing ones.");
                 }
                 return chooseWarehouse();
             }
@@ -196,7 +217,7 @@ public class Port {
         return null;
     }
     public Ship chooseShip(){
-        System.out.println("Choose id of ship (ships): ");
+        System.out.println("Choose position of ship (ships): ");
         Scanner readShip = new Scanner(System.in);
         String inputShip = readShip.nextLine();
         try {
@@ -207,7 +228,7 @@ public class Port {
                     int tempId = Integer.parseInt(inputShip);
                     Ship tempShip = getShipById(tempId);
                     if(tempShip!=null)throw new FinishInput(true, tempShip);
-                    else System.out.println("Can't find ship by " + tempId + " id. Try 'ships' to observe existing ones.");
+                    else System.out.println("Can't find ship by " + tempId + " position. Try 'ships' to observe existing ones.");
                 }
                 return chooseShip();
             }
@@ -228,7 +249,7 @@ public class Port {
         return null;
     }
     public Sender chooseSender(){
-        System.out.println("Choose the id of the sender(senders)");
+        System.out.println("Choose the position of the sender(senders)");
         Scanner readSender = new Scanner(System.in);
         String inputSender = readSender.nextLine();
         try {
@@ -239,7 +260,7 @@ public class Port {
                     int tempId = Integer.parseInt(inputSender);
                     Sender tempSender = getSenderById(tempId);
                     if(tempSender!=null)throw new FinishInput(true, tempSender);
-                    else System.out.println("Can't find sender by " + tempId + " id. Try 'senders' to observe existing ones.");
+                    else System.out.println("Can't find sender by " + tempId + " position. Try 'senders' to observe existing ones.");
                 }
                 return chooseSender();
             }
@@ -284,6 +305,17 @@ public class Port {
         }
         return null;
     }
+    public Container chooseContainer(Warehouse warehouse){
+        try {
+            return warehouse.getContainer();
+        }
+        catch (Exception e){
+            System.out.println("Process interrupted, moving to home page");
+            action();
+        }
+        return null;
+    }
+
 
     public void showConts(Ship ship){
         whatInsideShip(ship);
@@ -427,8 +459,10 @@ public class Port {
         System.out.println("sr - show existing containers in railway transport");
         System.out.println("wiw - show what is stored in warehouse");
         System.out.println("wis - show what is stored in ship");
+        System.out.println("lts - load container from warehouse to ship");
         System.out.println("utrt - unload to railway transport");
         System.out.println("wisr - show all possible senders");
+        System.out.println("utw - unload to warehouse");
         System.out.println("end - finish");
         System.out.println("There is also 'stop' command that works almost everywhere to remove changes and back to starting page!");
     }

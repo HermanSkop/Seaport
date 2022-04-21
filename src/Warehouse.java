@@ -30,13 +30,16 @@ public class Warehouse {
     public int getCapacity() {
         return capacity;
     }
-    public void addToWarehouse(Container container){
-        if(container.sender.isResponsible()) {
-            outOfTime timeOut = new outOfTime(container, this);
-            storedConts.add(container);
-            System.out.println(container.hashCode() + " is added to " + id + " Warehouse");
+    public boolean addToWarehouse(Container container){
+        if (container.sender.isResponsible()) {
+            if (storedConts.size() != capacity) {
+                outOfTime timeOut = new outOfTime(container, this);
+                storedConts.add(container);
+                System.out.println(container.hashCode() + " is added to " + id + " Warehouse");
+                return true;
+            }
         }
-        else System.out.println("Container cannot be added, because sender has no permission!");
+        return false;
     }
     public boolean isInWarehouse(Container container){
         return storedConts.contains(container);
@@ -50,7 +53,7 @@ public class Warehouse {
     }
 
     public Container getContainer(){
-        System.out.println("Choose id of container you need(conts)");
+        System.out.println("Choose position of container you need(conts)");
         Scanner readCont = new Scanner(System.in);
         String inputCont = readCont.nextLine();
         try {

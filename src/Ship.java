@@ -25,7 +25,9 @@ public class Ship {
         System.out.println("Ship by ID: " + lastId + " is created");
     }
     Ship(Boolean commonOrExtended){
-        super();
+        shipId = lastId+1;
+        ++lastId;
+        System.out.println("Ship by ID: " + lastId + " is created");
         if(commonOrExtended){
             maxToxicAndExplosiveConts = 5;
             maxElectroConts = 5;
@@ -249,7 +251,7 @@ public class Ship {
     }
 
     public Container getContainer(){
-        System.out.println("Choose id of container you need(conts)");
+        System.out.println("Choose position of container you need(conts)");
         Scanner readCont = new Scanner(System.in);
         String inputCont = readCont.nextLine();
         try {

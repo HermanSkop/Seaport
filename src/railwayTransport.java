@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class railwayTransport{
-    static int maxConts = 3;
+    static int maxConts = 1;
     LocalDate arrivalDate = null;
     List<Container> containers = new ArrayList<>();
     Port port = null;
