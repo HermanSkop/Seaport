@@ -190,19 +190,27 @@ public class Ship {
     }
     public ContSuitability suitRequirements(Container container){
         try{
-            if((getCurrWeight()+container.grossWeight)>maxWeight) throw new ContSuitability(false, "Ship cannot fit anymore containers due to weight overload!");
-            if((getCurrNumOfConts()+1)>maxAllConts)  throw new ContSuitability(false, "Ship cannot fit anymore containers due to lack of space for All containers!");
-            if((getCurrHeavyConts()+1)>maxHeavyConts)  throw new ContSuitability(false, "Ship cannot fit anymore containers due to lack of space for Heavy containers!");
-            if((getCurrElectroConts()+1)>maxElectroConts)  throw new ContSuitability(false, "Ship cannot fit anymore containers due lack of space for Electro containers!");
-            if((getCurrDangConts()+1)>maxToxicAndExplosiveConts)  throw new ContSuitability(false, "Ship cannot fit anymore containers due lack of space for Dangerous containers!");
-
-
-
-            else throw new ContSuitability(true, "Everything is fine");
+            try {
+                if ((getCurrWeight() + container.grossWeight) > maxWeight)
+                    throw new ContSuitability(false, "Ship cannot fit anymore containers due to weight overload!");
+                if ((getCurrNumOfConts() + 1) > maxAllConts)
+                    throw new ContSuitability(false, "Ship cannot fit anymore containers due to lack of space for All containers!");
+                if ((getCurrHeavyConts() + 1) > maxHeavyConts)
+                    throw new ContSuitability(false, "Ship cannot fit anymore containers due to lack of space for Heavy containers!");
+                if ((getCurrElectroConts() + 1) > maxElectroConts)
+                    throw new ContSuitability(false, "Ship cannot fit anymore containers due lack of space for Electro containers!");
+                if ((getCurrDangConts() + 1) > maxToxicAndExplosiveConts)
+                    throw new ContSuitability(false, "Ship cannot fit anymore containers due lack of space for Dangerous containers!");
+                else throw new ContSuitability(true, "Everything is fine");
+            }
+            catch (ContSuitability e) {
+                return e;
+            }
         }
-        catch (ContSuitability e){
-            return e;
+        catch (Exception e){
+            return new ContSuitability(false, e.getMessage());
         }
+
     }
 
     public int getCurrDangConts(){
