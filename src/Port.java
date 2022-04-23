@@ -38,6 +38,7 @@ public class Port {
             else if(Objects.equals(input, "wisr")) whatInsideSenders();
             else if(Objects.equals(input, "utrt")) unloadToRailTransport();
             else if(Objects.equals(input, "utw")) unloadToWarehouse();
+            else if(Objects.equals(input, "rs")) removeShip();
             else if(Objects.equals(input, "end"))throw new Exception();
             else if(Objects.equals(input, "help")) hint();
             else System.out.println("Incorrect input: " + input + ", try 'help'");
@@ -130,6 +131,16 @@ public class Port {
         WarehousesInPort.add(house);
     }
     public void addShip(@NotNull Ship ship){ShipsInPort.add(ship);}
+    public void removeShip(){
+        try {
+            ShipsInPort.remove(chooseShip());
+        }
+        catch (Exception e){
+            System.out.println("Can't find ship! Back to main menu");
+            action();
+        }
+        System.out.println("Ship is on it's way");
+    }
 
     public void unloadToRailTransport(){
         Ship tempShip = chooseShip();
@@ -463,6 +474,7 @@ public class Port {
         System.out.println("utrt - unload to railway transport");
         System.out.println("wisr - show all possible senders");
         System.out.println("utw - unload to warehouse");
+        System.out.println("rs - remove ship from the port");
         System.out.println("end - finish");
         System.out.println("There is also 'stop' command that works almost everywhere to remove changes and back to starting page!");
     }

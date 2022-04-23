@@ -210,7 +210,6 @@ public class Ship {
         catch (Exception e){
             return new ContSuitability(false, e.getMessage());
         }
-
     }
 
     public int getCurrDangConts(){
